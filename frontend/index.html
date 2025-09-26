@@ -271,20 +271,20 @@
         async function loadAirports() {
             try {
                 const response = await fetch(`${API_BASE_URL}/airports`);
-                const airports = await response.json();
+                const data = await response.json();
                 
                 const airportSelect = document.getElementById('airport');
                 airportSelect.innerHTML = '<option value="">Choose an airport...</option>';
                 
                 // Sort airports alphabetically (API should already do this)
-                airports.forEach(airport => {
+                data.airports.forEach(airport => {
                     const option = document.createElement('option');
                     option.value = airport.id;
                     option.textContent = `${airport.name} (${airport.city}, ${airport.state})`;
                     airportSelect.appendChild(option);
                 });
                 
-                console.log(`✅ Loaded ${airports.length} airports`);
+                console.log(`✅ Loaded ${data.airports.length} airports`);
             } catch (error) {
                 console.error('❌ Error loading airports:', error);
                 const airportSelect = document.getElementById('airport');
@@ -355,8 +355,8 @@
                 }
 
                 // Display successful prediction
-                const delayPercent = (prediction.delay * 100).toFixed(1);
-                const certaintyPercent = (prediction.certainty * 100).toFixed(1);
+                const delayPercent = prediction.delay_chance_percent.toFixed(1);
+                const onTimePercent = (prediction.no_delay_probability * 100).toFixed(1);
                 
                 const resultContent = `
                     <div class="airport-info">
@@ -372,7 +372,7 @@
                         </div>
                         <div class="prediction-card">
                             <h5>On-Time Probability</h5>
-                            <div class="prediction-value" style="color: ${certaintyPercent > 50 ? '#00d4aa' : '#ff6b6b'}">${certaintyPercent}%</div>
+                            <div class="prediction-value" style="color: ${onTimePercent > 50 ? '#00d4aa' : '#ff6b6b'}">${onTimePercent}%</div>
                         </div>
                     </div>
                     
